@@ -1,9 +1,13 @@
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
 
 const App = () => {
-  
   return (
-    <div>App</div>
-  )
-}
+    <div data-theme={"cupcake"}>
+      <Navbar />
+      <Home />
+    </div>
+  );
+};
 
-export default App
+export default App;
