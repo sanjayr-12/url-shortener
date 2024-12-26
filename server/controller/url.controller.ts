@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import URLModel from "../model/url.schema";
+import slugify from "slugify";
 export const aliasName = async (req: Request, res: Response) => {
   try {
     const { name, url } = req.body;
@@ -7,10 +8,15 @@ export const aliasName = async (req: Request, res: Response) => {
       res.status(400).json({ error: "Alias Name or URL is required" });
       return;
     }
-
+    if (name.length <= 2) {
+      res
+        .status(400)
+        .json({ error: "the Alias name should be more than length 2" });
+    }
+    const slug = slugify(name);
     const newURL = new URLModel({
       name,
-      url,
+      url: slug,
     });
 
     await newURL.save();
