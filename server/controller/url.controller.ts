@@ -14,13 +14,21 @@ export const aliasName = async (req: Request, res: Response) => {
         .json({ error: "the Alias name should be more than length 2" });
     }
     const slug = slugify(name);
+
+    const checkPresent = await URLModel.findOne({ name: slug });
+
+    if (checkPresent) {
+        res.status(400).json({ error: "Choose anyother name" });
+        return
+      }
+      
     const newURL = new URLModel({
-      name,
-      url: slug,
+      name: slug,
+      url,
     });
-
-    await newURL.save();
-
+      
+      await newURL.save();
+      
     res.status(200).json({ message: "URL created", url: newURL.url });
   } catch (error) {
     if (error instanceof Error) {
