@@ -12,24 +12,25 @@ export const aliasName = async (req: Request, res: Response) => {
       res
         .status(400)
         .json({ error: "the Alias name should be more than length 2" });
+      return;
     }
     const slug = slugify(name);
 
     const checkPresent = await URLModel.findOne({ name: slug });
 
     if (checkPresent) {
-        res.status(400).json({ error: "Choose anyother name" });
-        return
-      }
-      
+      res.status(400).json({ error: "Choose another name" });
+      return;
+    }
+
     const newURL = new URLModel({
       name: slug,
       url,
     });
-      
-      await newURL.save();
-      
-    res.status(200).json({ message: "URL created", url: newURL.url });
+
+    await newURL.save();
+
+    res.status(200).json({ message: "URL created", url: `http://localhost:5174/${newURL.name}` });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
