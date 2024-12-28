@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import URLModel from "../model/url.schema";
 import slugify from "slugify";
+
 export const aliasName = async (req: Request, res: Response) => {
   try {
     const { name, url } = req.body;
@@ -30,12 +31,38 @@ export const aliasName = async (req: Request, res: Response) => {
 
     await newURL.save();
 
-    res.status(200).json({ message: "URL created", url: `http://localhost:5174/${newURL.name}` });
+    res
+      .status(200)
+      .json({ message: "URL created", url: process.env.URL + name });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
       return;
     }
     res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const redirectURL = async (req: Request, res: Response) => {
+  try {
+    const { alias } = req.params;
+    if (!alias) {
+      res
+        .status(400)
+        .json({ error: "Something went wrong, there is no params" });
+      return;
+    }
+    const URL = await URLModel.findOne({ name: alias });
+    if (!URL) {
+      res.status(400).json({ error: "No url associated with this url" });
+      return;
+    }
+    res.redirect(URL.url);
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: "Internal server error " + error.message });
+      return;
+    }
+    res.status(500).json({ error: "Unknown error" });
   }
 };

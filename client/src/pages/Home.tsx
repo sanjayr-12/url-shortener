@@ -24,9 +24,8 @@ const Home = () => {
       setUrl(response.data.url);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-          toast.error(error.response?.data.error);
-          console.log(error);
-          
+        toast.error(error.response?.data.error);
+        console.log(error);
       } else if (error instanceof Error) {
         toast.error("Somthing went wrong");
       }
